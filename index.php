@@ -6,11 +6,9 @@
         header("localhost: ../../index.php");
         exit;
     }
-    $sql = "SELECT * FROM users WHERE role = 'student' ORDER BY id DESC";
-    $result = mysqli_query($conn, $sql);    
-
+    $sql = "SELECT * FROM subjects ORDER BY id DESC";
+    $result = mysqli_query($conn, $sql);  
 ?>
-
 <!doctype html>
 <html lang="en">
 
@@ -22,7 +20,7 @@
         content="width=device-width, initial-scale=1"
     >
 
-    <title>Students</title>
+    <title>Subjects</title>
 
     <!-- Bootstrap CSS -->
     <link
@@ -63,66 +61,59 @@
         <div class="d-flex justify-content-between mb-3">
 
             <div>
-                <h2>Student Accounts</h2>
-                
+                <h2>Subjects</h2>
+
                 <a href="../dashboard.php">
                     ← Dashboard
                 </a>
             </div>
 
             <a
-                class="btn btn-primary"
                 href="create.php"
+                class="btn btn-primary"
             >
-                + Add Student
+                + Add Subject
             </a>
 
         </div>
 
-        <!-- Student List Card -->
+        <!-- Subjects List Card -->
         <div class="card">
+
             <div class="card-body">
 
-                <table class="table table-hover">
+                <table class="table">
 
                     <thead>
                         <tr>
-                            <th>Student No.</th>
-                            <th>Name</th>
-                            <th>Username</th>
+                            <th>Code</th>
+                            <th>Subject Name</th>
+                            <th>Units</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
 
                     <tbody>
 
-                        <!-- Student Record -->
+                        <!-- Subject Record -->
                          <?php 
                             while($row = mysqli_fetch_assoc($result) ){
                                 
                          ?>
                         <tr>
-                            <td><?php echo htmlspecialchars($row["student_no"]);?></td>
+                            <td><?php echo htmlspecialchars($row["subject_code"]);?></td>
 
                             <td>
-                                <?php echo htmlspecialchars($row["full_name"]);?>
+                                <?php echo htmlspecialchars($row["subject_name"]);?></td>
+
                             </td>
 
-                            <td>
-                               <?php echo htmlspecialchars($row["username"]);?>
-                            </td>
+                            <td><?php echo htmlspecialchars($row["units"]);?></td>
 
                             <td>
                                 <a
-                                    class="btn btn-success btn-sm"
-                                    href="enroll.html"
-                                >
-                                    Enroll Subjects
-                                </a>
-
-                                <a
+                                    href="subject_form.html"
                                     class="btn btn-warning btn-sm"
-                                    href="student_form.html"
                                 >
                                     Edit
                                 </a>
@@ -141,6 +132,7 @@
                 </table>
 
             </div>
+
         </div>
 
     </div>
