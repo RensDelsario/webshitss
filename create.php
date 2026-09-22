@@ -9,20 +9,19 @@
     $message = "";
     if(isset($_POST["save"])){
         //collect data from form
-        $student_no = $_POST["student_no"];
-        $full_name = $_POST["full_name"];
-        $username = $_POST["username"];
-        $password = password_hash($_POST["password"], PASSWORD_DEFAULT);
+        $subject_code = $_POST["subject_code"];
+        $subject_name = $_POST["subject_name"];
+        $units = $_POST["units"];
 
-        $sql = "INSERT INTO users (`student_no`, `full_name`, `username`, `password`, `role`)
-        VALUES ('$student_no', '$full_name', '$username', '$password' , 'student' ) ";
+        $sql = "INSERT INTO subjects (`subject_code`, `subject_name`, `units`)
+        VALUES ('$subject_code', '$subject_name',  '$units') ";
 
         if(mysqli_query($conn, $sql)){
-            header("Location: index.php?message=Student record added success");
+            header("Location: index.php?message=Subjects record added success");
             exit;
         }
         else{
-            $message =  "Invalid added students record!!!!";
+            $message =  "Invalid added subjects record!!!!";
         }
 
     }
@@ -38,7 +37,10 @@
         content="width=device-width, initial-scale=1"
     >
 
-    <title>Student Form</title>
+    <title>Subject Form</title>
+                <?php if($message != ""){?>
+                <div class="alert alert-danger"><?php echo $message; ?></div>
+                <?php } ?>
 
     <!-- Bootstrap CSS -->
     <link
@@ -55,54 +57,45 @@
         style="max-width: 700px;"
     >
 
-        <!-- Student Form Card -->
+        <!-- Subject Form Card -->
         <div class="card border-0 shadow-sm">
 
             <div class="card-body p-4">
-
-                <h2>Student Account Form</h2>
                 <?php if($message != ""){?>
                 <div class="alert alert-danger"><?php echo $message; ?></div>
                 <?php } ?>
 
+                <h2>Subject Form</h2>
+
                 <form method="POST">
 
-                    <!-- Student Number -->
+                    <!-- Subject Code -->
                     <div class="mb-3">
                         <label class="form-label">
-                            Student Number
+                            Subject Code
                         </label>
 
-                        <input class="form-control" name="student_no">
+                        <input class="form-control" name="subject_code">
                     </div>
 
-                    <!-- Full Name -->
+                    <!-- Subject Name -->
                     <div class="mb-3">
                         <label class="form-label">
-                            Full Name
+                            Subject Name
                         </label>
 
-                        <input class="form-control" name="full_name">
+                        <input class="form-control" name="subject_name">
                     </div>
 
-                    <!-- Username -->
+                    <!-- Units -->
                     <div class="mb-3">
                         <label class="form-label">
-                            Username
-                        </label>
-
-                        <input class="form-control" name="username">
-                    </div>
-
-                    <!-- Password -->
-                    <div class="mb-3">
-                        <label class="form-label">
-                            Password
+                            Units
                         </label>
 
                         <input
-                            type="password"
-                            class="form-control" name="password"
+                            type="number"
+                            class="form-control" name="units"
                         >
                     </div>
 
@@ -112,7 +105,7 @@
                         class="btn btn-primary"
                         name="save"
                     >
-                        Save Student
+                        Save Subject
                     </button>
 
                     <a
