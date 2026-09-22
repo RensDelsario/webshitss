@@ -1,88 +1,150 @@
-
-<?php
+<?php 
     session_start();
-
-    include "config/database.php";
-
-    // If user is already logged in, redirect based on role
-    if (isset($_SESSION["role"])) {
-
-        if ($_SESSION["role"] == "admin") {
-            header("Location: admin/dashboard.php");
-        } else {
-            header("Location: student/dashboard.php");
-        }
-
+    include "../../config/database.php";
+    //only admin access  this page
+    if(!isset($_SESSION["role"]) || $_SESSION["role"] != "admin" ){
+        header("localhost: ../../index.php");
         exit;
     }
+    $sql = "SELECT * FROM users WHERE role = 'student' ORDER BY id DESC";
+    $result = mysqli_query($conn, $sql);    
 
-    $error = "";
-
-    if (isset($_POST['login'])) {
-
-        // Get data from login form
-        $username = mysqli_real_escape_string($conn, $_POST["username"]);
-        $password = $_POST["password"];
-
-        // Find username in database
-        $sql = "SELECT * FROM users WHERE username='$username' LIMIT 1";
-        $result = mysqli_query($conn, $sql);
-
-        if (mysqli_num_rows($result) == 1) {
-
-            $user = mysqli_fetch_assoc($result);
-
-            // Compare input password with database password
-            if (password_verify($password, $user["password"])) {
-
-                $_SESSION["user_id"] = $user["id"];
-                $_SESSION["full_name"] = $user["full_name"];
-                $_SESSION["role"] = $user["role"];
-
-                // Redirect based on role
-                    if ($user["role"] == "admin") {
-                        header("Location: admin/dashboard.php");
-                    } else {
-                        header("Location: student/dashboard.php");
-                    }
-
-                exit;
-            }
-        }
-
-        $error = "Invalid username or password";
-    }
 ?>
-
-
 
 <!doctype html>
 <html lang="en">
+
 <head>
-    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login - Student Portal</title>
-    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="assets/css/style.css" rel="stylesheet">
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <title>Students</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+        href="../../assets/vendor/bootstrap/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Custom CSS -->
+    <link
+        href="../../assets/css/style.css"
+        rel="stylesheet"
+    >
 </head>
+
 <body>
-<div class="container">
-    <div class="login-box">
-        <div class="card"><div class="card-body p-4">
-            <h2 class="text-center">Student Portal</h2>
-            <p class="text-center text-muted">Admin and Student Login</p>
 
-            <?php
-            if($error != "" ){?>
-                <div class="alert alert-danger"><?php echo $error;?></div>
-            <?php }?>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container">
 
-            <form method="POST">
-                <div class="mb-3"><label class="form-label">Username</label><input type="text" name="username" class="form-control"></div>
-                <div class="mb-3"><label class="form-label">Password</label><input type="password" name="password" class="form-control"></div>
-                <button class="btn btn-primary w-100" type="submit" name="login">Login</button>
-            </form>
-        </div></div>
+            <a
+                class="navbar-brand"
+                href="dashboard.html"
+            >
+                Student Portal Admin
+            </a>
+
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container py-4">
+        <?php if(isset($_GET["message"])){ ?>
+                <div class="alert alert-succes"><?php echo $_GET["message"];?></div>
+        <?php } ?>
+
+        <!-- Header Section -->
+        <div class="d-flex justify-content-between mb-3">
+
+            <div>
+                <h2>Student Accounts</h2>
+                
+                <a href="../dashboard.php">
+                    ← Dashboard
+                </a>
+            </div>
+
+            <a
+                class="btn btn-primary"
+                href="create.php"
+            >
+                + Add Student
+            </a>
+
+        </div>
+
+        <!-- Student List Card -->
+        <div class="card">
+            <div class="card-body">
+
+                <table class="table table-hover">
+
+                    <thead>
+                        <tr>
+                            <th>Student No.</th>
+                            <th>Name</th>
+                            <th>Username</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <!-- Student Record -->
+                         <?php 
+                            while($row = mysqli_fetch_assoc($result) ){
+                                
+                         ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($row["student_no"]);?></td>
+
+                            <td>
+                                <?php echo htmlspecialchars($row["full_name"]);?>
+                            </td>
+
+                            <td>
+                               <?php echo htmlspecialchars($row["username"]);?>
+                            </td>
+
+                            <td>
+                                <a
+                                    class="btn btn-success btn-sm"
+                                    href="enroll.html"
+                                >
+                                    Enroll Subjects
+                                </a>
+
+                                <a
+                                    class="btn btn-warning btn-sm"
+                                    href="student_form.html"
+                                >
+                                    Edit
+                                </a>
+
+                                <button
+                                    class="btn btn-danger btn-sm"
+                                >
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                        <?php } ?>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        </div>
+
     </div>
-</div>
+
 </body>
+
 </html>
